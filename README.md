@@ -1,6 +1,7 @@
 # canvas_game
 
 //Primary code 
+
 var currentPos = 0;
 
 function animate() {  
