@@ -1,67 +1,90 @@
-var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
 
-    var spawnLineY = 0;
-    var spawnRate = 1500;
-    var spawnRateOfDescent = 0.50;
-    var lastSpawn = -1;
-    var objects = [];
-    var startTime = Date.now();
+let spawnLineY = 0;
+let spawnRate = 1500;
+let spawnRateOfDescent = 0.50;
+let lastSpawn = -1;
+let objects = [];
+let startTime = Date.now();
 
-    animate();
+animate();
 
-    function spawnRandomObject() {
-        var t;
-        if (Math.random() < 0.50) {
-            t = "red";
-        } else {
-            t = "blue";
-        }
-
-
-        var object = {
-            type: t,
-            x: Math.random() * (canvas.width - 30) + 15,
-            y: spawnLineY
-        };
-
-        objects.push(object);
+function spawnRandomObject() {
+    let t;
+    if (Math.random() < 0.50) {
+        t = 'rgb(255,0,0)';
+    } else {
+        t = 'rgb(0,255,0)';
     }
 
-    function animate() {
-        var time = Date.now();
-        if (time > (lastSpawn + spawnRate)) {
-            lastSpawn = time;
-            spawnRandomObject();
-        }
-        requestAnimationFrame(animate);
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath();
-        ctx.moveTo(0, spawnLineY);
-        ctx.lineTo(canvas.width, spawnLineY);
-        ctx.stroke();
+    let object = {
+        type: t,
+        x: Math.random() * (canvas.width - 30) + 15,
+        y: spawnLineY
 
-        //move each object down
-        for (var i = 0; i < objects.length; i++) {
-            var object = objects[i];
-            object.y += spawnRateOfDescent;
-            ctx.beginPath();
-            ctx.rect(object.x, object.y, 20, 20);
-            ctx.fillStyle = object.type;
-            ctx.fill();
+    };
 
-            canvas.onclick = function(e) {
-                var x = objects.x;
-                var y = objects.y;
-                ctx.fillStyle = "yellow";
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                console.log('clicked');
-            }
-        }
+    objects.push(object);
 
+    console.log('object', object);
 
 }
+
+
+let objLeft = canvas.offsetLeft;
+let  objTop = canvas.offsetTop;
+
+canvas.addEventListener('click', function(event) {
+    let x = event.pageX - objLeft,
+        y = event.pageY - objTop;
+
+    objects.forEach(function(element) {
+
+        console.log('element.top', element.top);
+        console.log('element.left', element.left);
+
+        if (y > element.top && y < (element.top + element.height) && x > element.left && x < (element.left + element.width)) {
+            alert('ya!');
+        }
+    });
+}, false);
+
+function animate() {
+    let time = Date.now();
+    if (time > (lastSpawn + spawnRate)) {
+        lastSpawn = time;
+        spawnRandomObject();
+    }
+    requestAnimationFrame(animate);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+
+    //move each object down
+    for (let i = 0; i < objects.length; i++) {
+        let object = objects[i];
+        object.y += spawnRateOfDescent;
+        ctx.beginPath();
+        ctx.rect(object.x, object.y, 20, 20);
+
+        object.top = object.y;
+        object.left = object.x;
+        object.width = 20;
+        object.height = 20;
+
+
+        ctx.fillStyle = object.type;
+        ctx.fill();
+
+
+    }
+}
+
+
+//})
 
 
 //document.body.onload = animate;
